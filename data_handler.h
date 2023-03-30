@@ -82,7 +82,7 @@ FILE *F;
 }
 
 
-Data color_mod(){
+Data color_mod(){//Modify the color intensity
     bool wl=true;
     int opt;
     vector <int>multiplicador;
