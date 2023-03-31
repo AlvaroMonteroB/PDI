@@ -32,15 +32,15 @@ typedef struct{
 typedef struct{
     Header_F Head_f;
     Header_img Head_img;
-    RGB *C_data;
+    vector<RGB> pixel;
 }Data;
 
 bool valid_vals(vector<int>range);
+Data color_multip_bmp(vector<int>multi);
 
-
-Data data_read(char * name){
+Data data_read_BMP(char * name){
 FILE *F;
-    F=fopen("name","r");
+    F=fopen("name","rw");
     if(!F){
         cout<<"Cannot read the file"<<endl;
     }
@@ -52,7 +52,7 @@ FILE *F;
         fread(header.file_header,sizeof(unsigned char),2,F);
         fread(header.file_size,sizeof(unsigned char),4,F);
         fread(header.reserved,sizeof(unsigned char),4,F);
-        fread(header.file_des,sizeof(unsigned char),4,F);
+        fread(header.file_des,sizeof(unsigned char),4,F);//offset
         //Leyendo cabecera de imagen
         fread(img_header.size_header, sizeof(unsigned char), 4, F);
         fread(img_header.img_width, sizeof(unsigned char), 4, F);
@@ -65,14 +65,28 @@ FILE *F;
         fread(img_header.img_vert_res, sizeof(unsigned char), 4, F);
         fread(img_header.img_color, sizeof(unsigned char), 4, F);
         fread(img_header.img_color_imp, sizeof(unsigned char), 4, F);
-        RGB *img_data=new RGB[(int)img_header.img_size];
-        fread(img_data,sizeof(RGB),((int)img_header.img_size)/sizeof(RGB),F);
+        vector<RGB>pix;
+        RGB aux,*iterator;
+        for (int i = 0; i < int(img_header.img_size); i++)
+        {
+            fread(iterator,sizeof(RGB),1,F);
+            aux=*iterator;
+            pix.push_back(aux);
+        }
+        
+        //fread(img_data,sizeof(RGB),((int)img_header.img_size)/sizeof(RGB),F);
         int num_pix=((int)img_header.img_size)/sizeof(RGB);
-
+        if(pix.size()==num_pix){
+          cout<<"Datos leidos correctamente "<<endl;  
+        }else{
+            perror("Error de lectura");
+        }
+        
         Data output;
         output.Head_f=header;
         output.Head_img=img_header;
-        output.C_data=img_data;
+        //output.C_data=img_data;
+        output.pixel=pix;
         return output;
 
 
@@ -82,7 +96,8 @@ FILE *F;
 }
 
 
-Data color_mod(){//Modify the color intensity
+
+Data color_mod( Data matrix){//Modify the color intensity
     bool wl=true;
     int opt;
     vector <int>multiplicador;
@@ -110,10 +125,42 @@ Data color_mod(){//Modify the color intensity
             cout<<"Introduce un multiplicador valido"<<endl;
             wl=true;
         }else{
-
+            wl=false;
         }
-
     }   
+    //Aqui es donde se modifica la imagen
+
 }
 
-bool valid_vals(vector<int>range)
+
+
+
+
+Data color_multip_bmp(vector<int>multi, Data *& matrix){
+    vector<RGB>image=matrix->pixel;
+    //Primero el multiplicador para el rojo
+    for(RGB &i:image){
+        if(multi[0]==0)
+          i.r;
+        else if(multi[0]<0){
+            i.r=i.r*-(multi[0]);
+        }  
+    }
+
+
+}
+
+
+
+
+
+bool valid_vals(vector<int>range){
+    for (int i = 0; i < range.size(); i++)
+    {
+        if(range[i]<-100||range[i]>100){
+            return false;
+        }
+    }return true;
+    
+}
+

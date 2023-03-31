@@ -6,7 +6,9 @@ using namespace std;
 
 int main(){
     string name;
-    Data img=data_read(name.data());
+    cout<<"Introduce el nombre de la imagen con su extension"<<endl;
+    cin>>name;
+    Data img=data_read_BMP(name.data());
     int opt;
     cout<<"1.-Modificar color"<<endl;
     cin>>opt;
