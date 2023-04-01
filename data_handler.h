@@ -36,7 +36,7 @@ typedef struct{
 }Data;
 
 bool valid_vals(vector<int>range);
-Data color_multip_bmp(vector<int>multi);
+Data *color_multip_bmp(vector<int>multi);
 
 Data data_read_BMP(char * name){
 FILE *F;
@@ -66,8 +66,12 @@ FILE *F;
         fread(img_header.img_color, sizeof(unsigned char), 4, F);
         fread(img_header.img_color_imp, sizeof(unsigned char), 4, F);
         vector<RGB>pix;
-        RGB aux,*iterator;
-        for (int i = 0; i < int(img_header.img_size); i++)
+        RGB aux,*iterator;//Img size ocupa 4,bit, hay que ponerlo todo en uno
+        int img_size=0;
+        for (int i = 0; i < 4; i++) {
+        img_size |= static_cast<int>(img_header.img_size[i]) << (8 * i);
+        }
+        for (int i = 0; i < img_size; i++)
         {
             fread(iterator,sizeof(RGB),1,F);
             aux=*iterator;
@@ -75,7 +79,7 @@ FILE *F;
         }
         
         //fread(img_data,sizeof(RGB),((int)img_header.img_size)/sizeof(RGB),F);
-        int num_pix=((int)img_header.img_size)/sizeof(RGB);
+        int num_pix=int(img_size)/sizeof(RGB);
         if(pix.size()==num_pix){
           cout<<"Datos leidos correctamente "<<endl;  
         }else{
@@ -129,14 +133,14 @@ Data color_mod( Data matrix){//Modify the color intensity
         }
     }   
     //Aqui es donde se modifica la imagen
-
+    return matrix;
 }
 
 
 
 
 
-Data color_multip_bmp(vector<int>multi, Data *& matrix){
+Data *color_multip_bmp(vector<int>multi, Data *& matrix){
     vector<RGB>image=matrix->pixel;
     //Primero el multiplicador para el rojo
     for(RGB &i:image){
@@ -147,6 +151,7 @@ Data color_multip_bmp(vector<int>multi, Data *& matrix){
         }  
     }
 
+return matrix;
 
 }
 
