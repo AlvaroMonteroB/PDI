@@ -108,4 +108,13 @@ def Or_(img1:ih.Image,img2:ih.Image)->ih.Image:
         mat=np.logical_or(mat1,mat2)
         output.assign_img(mat)
         return output
+
+def Xor_(img1:ih.Image,img2:ih.Image)->ih.Image:
+    output=ih.Image()
+    mat1=img1.imagen
+    mat2=img2.imagen 
+    if img1.mode==1 and img2.mode==1:
+        mat=np.logical_xor(mat1,mat2)
+        output.assign_img(mat)
+        return output
     
